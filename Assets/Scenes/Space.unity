@@ -351,6 +351,7 @@ GameObject:
   - component: {fileID: 1393052272}
   - component: {fileID: 1393052273}
   - component: {fileID: 1393052271}
+  - component: {fileID: 1393052274}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -370,13 +371,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9be2845ed97b66f49af02fbd2a75f79f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ManagerScript
-  cam: {fileID: 519420031}
-  camScroll: 1
   bodyPrefab: {fileID: 2049823899512669280, guid: a0fbf882b0a55f04196325d5becc4371, type: 3}
   fakebodyPrefab: {fileID: 2049823899512669280, guid: 7565917c5778ecb4d8ff2ba001a95162, type: 3}
   bodySizeMult: 0.1
   settingVelocity: 0
   velocity: 0
+  velStep: 1
   lineRenderer: {fileID: 0}
   predictionSteps: 250
   timeStep: 0.02
@@ -505,6 +505,20 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &1393052274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393052270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07211e47f29fb67438600a267d34aa81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraScript
+  cam: {fileID: 0}
+  camScroll: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

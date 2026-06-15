@@ -1,20 +1,18 @@
 using System.Collections;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ManagerScript : MonoBehaviour
 {
-    [Header("Camera Settings")]
-    [SerializeField]private Camera cam;
-    [SerializeField] private float camScroll;
-
     [Header("Body")]
     [SerializeField] private GameObject bodyPrefab;
     [SerializeField] private GameObject fakebodyPrefab;
     [SerializeField] private float bodySizeMult;
-    [SerializeField] private bool settingVelocity;
+    public bool settingVelocity;
     public float velocity;
+    [SerializeField] float velStep;
     private float massVar;
 
     [Header("Trajectory Settings")]
@@ -24,7 +22,6 @@ public class ManagerScript : MonoBehaviour
 
     private void Start()
     {
-        cam.orthographic = true;
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
         settingVelocity = false;
@@ -35,13 +32,6 @@ public class ManagerScript : MonoBehaviour
 
     private void Update()
     {
-        if(cam.orthographicSize >= 0)
-        {
-            cam.orthographicSize -= Input.mouseScrollDelta.y * camScroll;
-        }else
-        {
-            cam.orthographicSize = 0;
-        }
         if(Input.GetMouseButtonDown(0) && !settingVelocity)
             StartCoroutine(Spawn());
     }
@@ -62,6 +52,7 @@ public class ManagerScript : MonoBehaviour
         }
         //spawning original which is equal to fake and giving it velocity
         GameObject bodySpawn = Instantiate(bodyPrefab, pos, Quaternion.identity);
+        bodySpawn.GetComponent<CircleCollider2D>().enabled = false;
         bodySpawn.GetComponent<Rigidbody2D>().mass = 0f;
         massVar = fakebodySpawn.GetComponent<Rigidbody2D>().mass;
         bodySpawn.transform.localScale = fakebodySpawn.transform.localScale;
@@ -69,23 +60,26 @@ public class ManagerScript : MonoBehaviour
         yield return null;
         yield return StartCoroutine(Velocity(bodySpawn));
         bodySpawn.GetComponent<Rigidbody2D>().mass = massVar;
+        bodySpawn.GetComponent<CircleCollider2D>().enabled = true;
         bodySpawn.GetComponent<GravityScript>().grav = true;
     }
 
     private IEnumerator Velocity(GameObject body)
     {
         settingVelocity = true;
-        bool parameter = true;
         lineRenderer.enabled = true;
-        while (parameter)
+        while (settingVelocity)
         {
             Vector3 push = Camera.main.ScreenToWorldPoint(Input.mousePosition) - body.transform.position;
             push.Normalize();
+            if(velocity >= 0)
+                velocity += Input.mouseScrollDelta.y * velStep;
+            else
+                velocity = 0;
             if (Input.GetMouseButton(0) && settingVelocity)
             {
                 body.GetComponent<Rigidbody2D>().linearVelocity = push * velocity;
                 settingVelocity = false;
-                parameter = false;
             }
             visualizeTrajectory(body.transform.position, push * velocity, massVar, body);
             yield return null;
